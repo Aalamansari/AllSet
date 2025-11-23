@@ -249,6 +249,13 @@ p {
   margin: 0 auto;
 }
 
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
 
 /* Button Variants */
 .btn-ghost {

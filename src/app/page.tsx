@@ -29,7 +29,7 @@ export default function Home() {
             </span>
           </h1>
           <p className="hero-subtitle">
-            Automate your local setup. Choose your stack, generate a profile, and get coding immediately.
+            Automate your local setup. Choose your stack, generate a profile, and get started at coding immediately.
           </p>
           <div className="hero-actions">
             <Link href="/signup">
