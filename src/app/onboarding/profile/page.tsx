@@ -25,18 +25,22 @@ export default function ProfileCreationPage() {
         }
     }, [router]);
 
-    const handleCreate = (e: React.FormEvent) => {
+    const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault();
         if (role && stack.length > 0) {
             setLoading(true);
-            // Simulate API call
-            setTimeout(() => {
-                profiles.create(name, role, stack);
+            try {
+                await profiles.create(name, role, stack);
                 // Clear session storage
                 sessionStorage.removeItem('allset_role');
                 sessionStorage.removeItem('allset_stack');
                 router.push('/dashboard');
-            }, 1000);
+            } catch (error) {
+                console.error('Failed to create profile', error);
+                alert('Failed to create profile');
+            } finally {
+                setLoading(false);
+            }
         }
     };
 

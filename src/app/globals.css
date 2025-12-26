@@ -794,3 +794,92 @@ p {
 .flex-1 {
   flex: 1;
 }
+
+/* Enhanced Stack Selection */
+.stack-selection-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.stack-category-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stack-category-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 0.75rem;
+}
+
+.stack-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.tool-card {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  transition: all 0.2s ease;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.tool-card:hover {
+  border-color: rgba(109, 40, 217, 0.5);
+  background: var(--surface-hover);
+  transform: translateY(-1px);
+}
+
+.tool-card.selected {
+  border-color: var(--primary);
+  background: rgba(109, 40, 217, 0.1);
+  box-shadow: 0 0 0 1px var(--primary), 0 0 15px rgba(109, 40, 217, 0.2);
+}
+
+.tool-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.tool-name {
+  font-weight: 500;
+  color: white;
+  font-size: 0.95rem;
+}
+
+.recommended-badge {
+  font-size: 0.7rem;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.tool-check {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 12px var(--primary-glow);
+  flex-shrink: 0;
+}
+
+.stack-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: 1rem;
+}

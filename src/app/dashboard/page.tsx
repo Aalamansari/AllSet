@@ -14,13 +14,17 @@ export default function DashboardPage() {
     const [userName, setUserName] = useState('');
 
     useEffect(() => {
-        const user = auth.getUser();
-        if (!user) {
-            router.push('/login');
-            return;
-        }
-        setUserName(user.name);
-        setUserProfiles(profiles.getAll());
+        const loadData = async () => {
+            const user = await auth.getUser();
+            if (!user) {
+                router.push('/login');
+                return;
+            }
+            setUserName(user.name || user.email);
+            const data = await profiles.getAll();
+            setUserProfiles(data);
+        };
+        loadData();
     }, [router]);
 
     const handleDownload = (profile: Profile) => {
@@ -36,9 +40,39 @@ export default function DashboardPage() {
         window.URL.revokeObjectURL(url);
     };
 
-    const handleDelete = (id: string) => {
-        profiles.delete(id);
-        setUserProfiles(profiles.getAll());
+    const handleDelete = async (id: string) => {
+        try {
+            await profiles.delete(id);
+            const data = await profiles.getAll();
+            setUserProfiles(data);
+        } catch (error) {
+            console.error('Failed to delete profile:', error);
+        }
+    };
+
+    const toolNames: Record<string, string> = {
+        'vscode': 'VS Code',
+        'vs-community': 'Visual Studio',
+        'intellij': 'IntelliJ',
+        'node': 'Node.js',
+        'postgres': 'PostgreSQL',
+        'sql-server': 'SQL Server',
+        'mongo': 'MongoDB',
+        'docker': 'Docker',
+        'kubernetes-cli': 'Kubernetes',
+        'aws-cli': 'AWS CLI',
+        'azure-cli': 'Azure CLI',
+        'postman': 'Postman',
+        'react': 'React',
+        'nextjs': 'Next.js',
+        'angular': 'Angular',
+        'vue': 'Vue.js',
+        'python': 'Python',
+        'java': 'Java',
+        'go': 'Go',
+        'rust': 'Rust',
+        'git': 'Git',
+        'git-desktop': 'GitHub Desktop',
     };
 
     return (
@@ -105,7 +139,7 @@ export default function DashboardPage() {
                                         <div className="tools-list">
                                             {profile.stack.slice(0, 4).map(tool => (
                                                 <span key={tool} className="tool-badge">
-                                                    {tool}
+                                                    {toolNames[tool] || tool}
                                                 </span>
                                             ))}
                                             {profile.stack.length > 4 && (
@@ -127,4 +161,5 @@ export default function DashboardPage() {
             </main>
         </div>
     );
+
 }

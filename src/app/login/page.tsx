@@ -10,17 +10,22 @@ import Link from 'next/link';
 export default function LoginPage() {
     const router = useRouter();
     const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
-        // Simulate network delay
-        setTimeout(() => {
-            auth.login(email);
-            router.push('/onboarding/role');
-        }, 1000);
+        try {
+            await auth.login(email, password);
+            router.push('/dashboard'); // Go to dashboard after login
+        } catch (error) {
+            console.error('Login failed:', error);
+            alert('Login failed. Please check your credentials.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -42,6 +47,15 @@ export default function LoginPage() {
                             placeholder="name@company.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                        <Input
+                            id="password"
+                            type="password"
+                            label="Password"
+                            placeholder="••••••••"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             required
                         />
 

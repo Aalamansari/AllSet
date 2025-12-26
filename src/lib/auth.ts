@@ -1,3 +1,5 @@
+import { supabase } from './supabase';
+
 export interface User {
     id: string;
     name: string;
@@ -5,37 +7,50 @@ export interface User {
     role?: string;
 }
 
-const STORAGE_KEY = 'allset_user';
-
 export const auth = {
-    login: (email: string): User => {
-        // Mock login - just create a user from email
-        const user = {
-            id: Math.random().toString(36).substr(2, 9),
-            name: email.split('@')[0],
+    login: async (email: string, password?: string) => {
+        if (password) {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email,
+                password,
+            });
+            if (error) throw error;
+            return data.user;
+        } else {
+            const { data, error } = await supabase.auth.signInWithOtp({
+                email,
+            });
+            if (error) throw error;
+            return null;
+        }
+    },
+
+    signup: async (email: string, password?: string) => {
+        const { data, error } = await supabase.auth.signUp({
             email,
+            password: password || undefined,
+        });
+        if (error) throw error;
+        return data.user;
+    },
+
+    logout: async () => {
+        await supabase.auth.signOut();
+    },
+
+    getUser: async (): Promise<User | null> => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return null;
+        return {
+            id: user.id,
+            email: user.email || '',
+            name: user.user_metadata?.full_name || user.email?.split('@')[0],
+            role: user.user_metadata?.role,
         };
-        if (typeof window !== 'undefined') {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-        }
-        return user;
     },
 
-    logout: () => {
-        if (typeof window !== 'undefined') {
-            localStorage.removeItem(STORAGE_KEY);
-        }
-    },
-
-    getUser: (): User | null => {
-        if (typeof window !== 'undefined') {
-            const stored = localStorage.getItem(STORAGE_KEY);
-            return stored ? JSON.parse(stored) : null;
-        }
-        return null;
-    },
-
-    isAuthenticated: (): boolean => {
-        return !!auth.getUser();
+    isAuthenticated: async (): Promise<boolean> => {
+        const user = await auth.getUser();
+        return !!user;
     }
 };

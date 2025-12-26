@@ -1,43 +1,52 @@
+import { supabase } from './supabase';
+
 export interface Profile {
     id: string;
     name: string;
     role: string;
-    stack: string[]; // List of tool IDs
-    createdAt: string;
+    stack: string[];
+    created_at?: string;
 }
 
-const STORAGE_KEY = 'allset_profiles';
-
 export const profiles = {
-    getAll: (): Profile[] => {
-        if (typeof window !== 'undefined') {
-            const stored = localStorage.getItem(STORAGE_KEY);
-            return stored ? JSON.parse(stored) : [];
+    getAll: async (): Promise<Profile[]> => {
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error('Error fetching profiles:', error);
+            return [];
         }
-        return [];
+        return data as Profile[];
     },
 
-    create: (name: string, role: string, stack: string[]): Profile => {
-        const newProfile: Profile = {
-            id: Math.random().toString(36).substr(2, 9),
-            name,
-            role,
-            stack,
-            createdAt: new Date().toISOString(),
-        };
+    create: async (name: string, role: string, stack: string[]): Promise<Profile | null> => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error('Not authenticated');
 
-        if (typeof window !== 'undefined') {
-            const current = profiles.getAll();
-            localStorage.setItem(STORAGE_KEY, JSON.stringify([...current, newProfile]));
-        }
-        return newProfile;
+        const { data, error } = await supabase
+            .from('profiles')
+            .insert({
+                user_id: user.id,
+                name,
+                role,
+                stack
+            })
+            .select()
+            .single();
+
+        if (error) throw error;
+        return data as Profile;
     },
 
-    delete: (id: string) => {
-        if (typeof window !== 'undefined') {
-            const current = profiles.getAll();
-            const filtered = current.filter(p => p.id !== id);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
-        }
+    delete: async (id: string) => {
+        const { error } = await supabase
+            .from('profiles')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
     }
 };

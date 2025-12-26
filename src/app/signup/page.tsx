@@ -10,17 +10,22 @@ import Link from 'next/link';
 export default function SignupPage() {
     const router = useRouter();
     const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const handleSignup = (e: React.FormEvent) => {
+    const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
-        // Simulate network delay
-        setTimeout(() => {
-            auth.login(email); // Just log them in for now
+        try {
+            await auth.signup(email, password);
             router.push('/onboarding/role');
-        }, 1000);
+        } catch (error) {
+            console.error('Signup failed:', error);
+            alert('Signup failed. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -42,6 +47,15 @@ export default function SignupPage() {
                             placeholder="name@company.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                        <Input
+                            id="password"
+                            type="password"
+                            label="Password"
+                            placeholder="••••••••"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             required
                         />
 
