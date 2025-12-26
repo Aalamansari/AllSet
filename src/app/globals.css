@@ -567,6 +567,8 @@ p {
 }
 
 .profile-role-badge {
+  display: inline-block;
+  width: fit-content;
   font-size: 0.75rem;
   font-weight: 500;
   padding: 0.25rem 0.5rem;
@@ -595,6 +597,128 @@ p {
   font-size: 0.75rem;
   color: #6b7280;
   padding: 0.25rem 0;
+}
+
+/* Profile Card Layout */
+.profile-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 1rem;
+}
+
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.profile-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+}
+
+.profile-tools-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  /* important for nested flex scroll */
+}
+
+.tools-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.tools-label {
+  font-size: 0.875rem;
+  color: #9ca3af;
+}
+
+.close-expanded-btn {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.close-expanded-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.tools-list-container {
+  flex: 1;
+  min-height: 0;
+}
+
+.profile-tools-section.expanded .tools-list-container {
+  max-height: 120px;
+  /* Fixed height for expanded view */
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* Custom scrollbar for the expanded list */
+.profile-tools-section.expanded .tools-list-container::-webkit-scrollbar {
+  width: 4px;
+}
+
+.profile-tools-section.expanded .tools-list-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.profile-tools-section.expanded .tools-list-container::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 10px;
+}
+
+.tools-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.more-badge-btn {
+  font-size: 0.75rem;
+  color: #6b7280;
+  padding: 0.25rem 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.more-badge-btn:hover {
+  color: var(--primary);
+}
+
+.profile-actions {
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+.profile-actions .btn {
+  width: 100%;
 }
 
 
@@ -664,6 +788,26 @@ p {
 .role-description {
   font-size: 0.875rem;
   color: #9ca3af;
+}
+
+.role-icon-wrapper {
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  width: fit-content;
+  margin-bottom: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.role-icon-wrapper.selected {
+  background: var(--primary);
+  color: black;
+  box-shadow: 0 0 15px var(--primary-glow);
+}
+
+.role-title.selected {
+  color: var(--primary);
 }
 
 .onboarding-actions {
@@ -882,4 +1026,28 @@ p {
   padding-top: 2rem;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   margin-top: 1rem;
+}
+
+.tool-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.tool-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: #9ca3af;
+  transition: all 0.2s ease;
+}
+
+.tool-icon.selected {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 0 10px var(--primary-glow);
 }

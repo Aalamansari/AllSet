@@ -58,40 +58,31 @@ export default function RoleSelectionPage() {
                         <div
                             key={role.id}
                             onClick={() => setSelectedRole(role.id)}
-                            className={`card role-card group relative overflow-hidden transition-all duration-300 ${isSelected
-                                    ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
-                                    : 'hover:border-primary/50 hover:bg-white/5'
-                                }`}
+                            className={`card role-card ${isSelected ? 'selected' : ''}`}
                         >
-                            <div className={`p-3 rounded-lg w-fit mb-4 transition-colors ${isSelected ? 'bg-primary text-black' : 'bg-white/10 text-white group-hover:bg-primary/20 group-hover:text-primary'
-                                }`}>
+                            <div className={`role-icon-wrapper ${isSelected ? 'selected' : ''}`}>
                                 <Icon size={28} />
                             </div>
 
-                            <h3 className={`role-title text-xl mb-2 ${isSelected ? 'text-primary' : 'text-white'}`}>
+                            <h3 className={`role-title ${isSelected ? 'selected' : ''}`}>
                                 {role.title}
                             </h3>
-                            <p className="role-description text-sm text-gray-400 leading-relaxed">
+                            <p className="role-description">
                                 {role.description}
                             </p>
-
-                            {/* Abstract decorative circle */}
-                            <div className={`absolute -bottom-4 -right-4 w-24 h-24 rounded-full blur-2xl transition-all duration-500 ${isSelected ? 'bg-primary/20 opacity-100' : 'bg-white/5 opacity-0 group-hover:opacity-100'
-                                }`} />
                         </div>
                     );
                 })}
             </div>
 
-            <div className="onboarding-actions fixed bottom-0 left-0 right-0 p-6 bg-background/80 backdrop-blur-lg border-t border-white/10 flex justify-end max-w-6xl mx-auto w-full">
+            <div className="onboarding-actions">
                 <Button
                     size="lg"
                     onClick={handleContinue}
                     disabled={!selectedRole}
-                    className="flex items-center gap-2 group"
                 >
                     Continue
-                    <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+                    <ArrowRight size={18} style={{ marginLeft: '0.5rem' }} />
                 </Button>
             </div>
         </div>

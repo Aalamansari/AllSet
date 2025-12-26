@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { profiles, Profile } from '@/lib/profiles';
@@ -12,8 +12,14 @@ export default function DashboardPage() {
     const router = useRouter();
     const [userProfiles, setUserProfiles] = useState<Profile[]>([]);
     const [userName, setUserName] = useState('');
+    const [expandedProfileId, setExpandedProfileId] = useState<string | null>(null);
+    const hasFetched = useRef(false);
 
     useEffect(() => {
+        // Prevent duplicate API calls (React Strict Mode causes double render)
+        if (hasFetched.current) return;
+        hasFetched.current = true;
+
         const loadData = async () => {
             const user = await auth.getUser();
             if (!user) {
@@ -48,6 +54,10 @@ export default function DashboardPage() {
         } catch (error) {
             console.error('Failed to delete profile:', error);
         }
+    };
+
+    const toggleExpand = (id: string) => {
+        setExpandedProfileId(expandedProfileId === id ? null : id);
     };
 
     const toolNames: Record<string, string> = {
@@ -115,47 +125,76 @@ export default function DashboardPage() {
                     </div>
                 ) : (
                     <div className="profiles-grid">
-                        {userProfiles.map((profile) => (
-                            <div key={profile.id} className="card group profile-card">
-                                <div className="delete-btn-wrapper">
-                                    <button
-                                        onClick={() => handleDelete(profile.id)}
-                                        className="delete-btn"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /></svg>
-                                    </button>
-                                </div>
+                        {userProfiles.map((profile) => {
+                            const isExpanded = expandedProfileId === profile.id;
 
-                                <div className="profile-content">
-                                    <div>
-                                        <h3 className="text-xl font-bold text-white mb-1">{profile.name}</h3>
-                                        <span className="profile-role-badge">
-                                            {profile.role}
-                                        </span>
+                            return (
+                                <div key={profile.id} className="card profile-card">
+                                    <div className="delete-btn-wrapper">
+                                        <button
+                                            onClick={() => handleDelete(profile.id)}
+                                            className="delete-btn"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /></svg>
+                                        </button>
                                     </div>
 
-                                    <div className="space-y-2">
-                                        <p className="text-sm text-gray-400">Includes:</p>
-                                        <div className="tools-list">
-                                            {profile.stack.slice(0, 4).map(tool => (
-                                                <span key={tool} className="tool-badge">
-                                                    {toolNames[tool] || tool}
-                                                </span>
-                                            ))}
-                                            {profile.stack.length > 4 && (
-                                                <span className="more-badge">+{profile.stack.length - 4} more</span>
-                                            )}
+                                    <div className="profile-content">
+                                        <div className="profile-header">
+                                            <h3 className="profile-name">{profile.name}</h3>
+                                            <span className="profile-role-badge">
+                                                {profile.role}
+                                            </span>
+                                        </div>
+
+                                        <div className={`profile-tools-section ${isExpanded ? 'expanded' : ''}`}>
+                                            <div className="tools-header-row">
+                                                <p className="tools-label">Includes:</p>
+                                                {isExpanded && (
+                                                    <button className="close-expanded-btn" onClick={() => setExpandedProfileId(null)}>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                                    </button>
+                                                )}
+                                            </div>
+
+                                            <div className="tools-list-container">
+                                                <div className="tools-list">
+                                                    {isExpanded ? (
+                                                        profile.stack.map(tool => (
+                                                            <span key={tool} className="tool-badge">
+                                                                {toolNames[tool] || tool}
+                                                            </span>
+                                                        ))
+                                                    ) : (
+                                                        <>
+                                                            {profile.stack.slice(0, 4).map(tool => (
+                                                                <span key={tool} className="tool-badge">
+                                                                    {toolNames[tool] || tool}
+                                                                </span>
+                                                            ))}
+                                                            {profile.stack.length > 4 && (
+                                                                <button
+                                                                    className="more-badge-btn"
+                                                                    onClick={() => toggleExpand(profile.id)}
+                                                                >
+                                                                    +{profile.stack.length - 4} more
+                                                                </button>
+                                                            )}
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="profile-actions">
+                                            <Button onClick={() => handleDownload(profile)}>
+                                                Download Setup Script
+                                            </Button>
                                         </div>
                                     </div>
-
-                                    <div className="card-actions">
-                                        <Button className="w-full" onClick={() => handleDownload(profile)}>
-                                            Download Setup Script
-                                        </Button>
-                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 )}
             </main>

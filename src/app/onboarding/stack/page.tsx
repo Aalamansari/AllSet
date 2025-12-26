@@ -3,64 +3,108 @@
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { useState, useEffect } from 'react';
+import { IconType } from 'react-icons';
+
+// Import from different icon packs
+import {
+    DiVisualstudio,
+    DiJava,
+    DiGit,
+    DiGithubBadge,
+    DiNodejsSmall,
+    DiPython,
+    DiPostgresql,
+    DiMysql,
+    DiMongodb,
+    DiRedis,
+    DiDocker,
+    DiReact,
+    DiAngularSimple,
+    DiRust,
+    DiGo
+} from 'react-icons/di';
+
+import {
+    SiIntellijidea,
+    SiSublimetext,
+    SiDotnet,
+    SiSqlite,
+    SiKubernetes,
+    SiAmazonwebservices,
+    SiNextdotjs,
+    SiVuedotjs,
+    SiNestjs,
+    SiExpress,
+    SiPostman,
+    SiInsomnia,
+    SiFigma,
+    SiGooglechrome,
+    SiNotion,
+    SiObsidian,
+    SiSlack
+} from 'react-icons/si';
+
+import { VscVscode, VscAzure } from 'react-icons/vsc';
+import { FaDatabase, FaCode } from 'react-icons/fa';
 
 interface Tool {
     id: string;
     name: string;
     category: string;
+    icon: IconType;
 }
 
 const tools: Tool[] = [
     // IDEs
-    { id: 'vscode', name: 'VS Code', category: 'IDE' },
-    { id: 'vs-community', name: 'Visual Studio', category: 'IDE' },
-    { id: 'intellij', name: 'IntelliJ IDEA', category: 'IDE' },
-    { id: 'sublime', name: 'Sublime Text', category: 'IDE' },
-    { id: 'cursor', name: 'Cursor', category: 'IDE' },
+    { id: 'vscode', name: 'VS Code', category: 'IDE', icon: VscVscode },
+    { id: 'vs-community', name: 'Visual Studio', category: 'IDE', icon: DiVisualstudio },
+    { id: 'intellij', name: 'IntelliJ IDEA', category: 'IDE', icon: SiIntellijidea },
+    { id: 'sublime', name: 'Sublime Text', category: 'IDE', icon: SiSublimetext },
+    { id: 'cursor', name: 'Cursor', category: 'IDE', icon: FaCode },
 
     // Version Control
-    { id: 'git', name: 'Git', category: 'Version Control' },
-    { id: 'git-desktop', name: 'GitHub Desktop', category: 'Version Control' },
+    { id: 'git', name: 'Git', category: 'Version Control', icon: DiGit },
+    { id: 'git-desktop', name: 'GitHub Desktop', category: 'Version Control', icon: DiGithubBadge },
 
     // Runtimes & Languages
-    { id: 'node', name: 'Node.js', category: 'Runtime' },
-    { id: 'python', name: 'Python', category: 'Runtime' },
-    { id: 'java', name: 'Java JDK', category: 'Runtime' },
-    { id: 'go', name: 'Go', category: 'Runtime' },
-    { id: 'rust', name: 'Rust', category: 'Runtime' },
-    { id: 'dotnet', name: '.NET SDK', category: 'Runtime' },
+    { id: 'node', name: 'Node.js', category: 'Runtime', icon: DiNodejsSmall },
+    { id: 'python', name: 'Python', category: 'Runtime', icon: DiPython },
+    { id: 'java', name: 'Java JDK', category: 'Runtime', icon: DiJava },
+    { id: 'go', name: 'Go', category: 'Runtime', icon: DiGo },
+    { id: 'rust', name: 'Rust', category: 'Runtime', icon: DiRust },
+    { id: 'dotnet', name: '.NET SDK', category: 'Runtime', icon: SiDotnet },
 
     // Databases
-    { id: 'postgres', name: 'PostgreSQL', category: 'Database' },
-    { id: 'sql-server', name: 'SQL Server', category: 'Database' },
-    { id: 'mysql', name: 'MySQL', category: 'Database' },
-    { id: 'mongo', name: 'MongoDB', category: 'Database' },
-    { id: 'redis', name: 'Redis', category: 'Database' },
-    { id: 'sqlite', name: 'SQLite', category: 'Database' },
-    { id: 'dbeaver', name: 'DBeaver', category: 'Database' },
+    { id: 'postgres', name: 'PostgreSQL', category: 'Database', icon: DiPostgresql },
+    { id: 'sql-server', name: 'SQL Server', category: 'Database', icon: FaDatabase },
+    { id: 'mysql', name: 'MySQL', category: 'Database', icon: DiMysql },
+    { id: 'mongo', name: 'MongoDB', category: 'Database', icon: DiMongodb },
+    { id: 'redis', name: 'Redis', category: 'Database', icon: DiRedis },
+    { id: 'sqlite', name: 'SQLite', category: 'Database', icon: SiSqlite },
+    { id: 'dbeaver', name: 'DBeaver', category: 'Database', icon: FaDatabase },
 
     // DevOps & Cloud
-    { id: 'docker', name: 'Docker', category: 'DevOps' },
-    { id: 'kubernetes-cli', name: 'Kubernetes', category: 'DevOps' },
-    { id: 'aws-cli', name: 'AWS CLI', category: 'DevOps' },
-    { id: 'azure-cli', name: 'Azure CLI', category: 'DevOps' },
+    { id: 'docker', name: 'Docker', category: 'DevOps', icon: DiDocker },
+    { id: 'kubernetes-cli', name: 'Kubernetes', category: 'DevOps', icon: SiKubernetes },
+    { id: 'aws-cli', name: 'AWS CLI', category: 'DevOps', icon: SiAmazonwebservices },
+    { id: 'azure-cli', name: 'Azure CLI', category: 'DevOps', icon: VscAzure },
 
     // Frameworks
-    { id: 'react', name: 'React', category: 'Framework' },
-    { id: 'nextjs', name: 'Next.js', category: 'Framework' },
-    { id: 'angular', name: 'Angular', category: 'Framework' },
-    { id: 'vue', name: 'Vue.js', category: 'Framework' },
-    { id: 'nest', name: 'NestJS', category: 'Framework' },
-    { id: 'express', name: 'Express', category: 'Framework' },
+    { id: 'react', name: 'React', category: 'Framework', icon: DiReact },
+    { id: 'nextjs', name: 'Next.js', category: 'Framework', icon: SiNextdotjs },
+    { id: 'angular', name: 'Angular', category: 'Framework', icon: DiAngularSimple },
+    { id: 'vue', name: 'Vue.js', category: 'Framework', icon: SiVuedotjs },
+    { id: 'nest', name: 'NestJS', category: 'Framework', icon: SiNestjs },
+    { id: 'express', name: 'Express', category: 'Framework', icon: SiExpress },
 
     // Tools
-    { id: 'postman', name: 'Postman', category: 'Tools' },
-    { id: 'insomnia', name: 'Insomnia', category: 'Tools' },
-    { id: 'figma', name: 'Figma', category: 'Tools' },
-    { id: 'chrome', name: 'Chrome', category: 'Tools' },
-    { id: 'notion', name: 'Notion', category: 'Productivity' },
-    { id: 'obsidian', name: 'Obsidian', category: 'Productivity' },
-    { id: 'slack', name: 'Slack', category: 'Productivity' },
+    { id: 'postman', name: 'Postman', category: 'Tools', icon: SiPostman },
+    { id: 'insomnia', name: 'Insomnia', category: 'Tools', icon: SiInsomnia },
+    { id: 'figma', name: 'Figma', category: 'Tools', icon: SiFigma },
+    { id: 'chrome', name: 'Chrome', category: 'Tools', icon: SiGooglechrome },
+    { id: 'notion', name: 'Notion', category: 'Productivity', icon: SiNotion },
+    { id: 'obsidian', name: 'Obsidian', category: 'Productivity', icon: SiObsidian },
+    { id: 'slack', name: 'Slack', category: 'Productivity', icon: SiSlack },
 ];
 
 const recommendations: Record<string, string[]> = {
@@ -128,6 +172,7 @@ export default function StackSelectionPage() {
                             {categoryTools.map((tool) => {
                                 const selected = selectedTools.includes(tool.id);
                                 const recommended = isRecommended(tool.id);
+                                const IconComponent = tool.icon;
                                 return (
                                     <div
                                         key={tool.id}
@@ -135,7 +180,12 @@ export default function StackSelectionPage() {
                                         className={`card tool-card ${selected ? 'selected' : ''}`}
                                     >
                                         <div className="tool-info">
-                                            <span className="tool-name">{tool.name}</span>
+                                            <div className="tool-name-row">
+                                                <span className={`tool-icon ${selected ? 'selected' : ''}`}>
+                                                    <IconComponent size={18} />
+                                                </span>
+                                                <span className="tool-name">{tool.name}</span>
+                                            </div>
                                             {recommended && (
                                                 <span className="recommended-badge">★ Recommended</span>
                                             )}
