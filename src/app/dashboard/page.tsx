@@ -12,6 +12,7 @@ export default function DashboardPage() {
     const router = useRouter();
     const [userProfiles, setUserProfiles] = useState<Profile[]>([]);
     const [userName, setUserName] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
     const [expandedProfileIds, setExpandedProfileIds] = useState<string[]>([]);
     const hasFetched = useRef(false);
 
@@ -21,14 +22,20 @@ export default function DashboardPage() {
         hasFetched.current = true;
 
         const loadData = async () => {
-            const user = await auth.getUser();
-            if (!user) {
-                router.push('/login');
-                return;
+            try {
+                const user = await auth.getUser();
+                if (!user) {
+                    router.push('/login');
+                    return;
+                }
+                setUserName(user.name || user.email);
+                const data = await profiles.getAll();
+                setUserProfiles(data);
+            } catch (error) {
+                console.error('Failed to load dashboard data:', error);
+            } finally {
+                setIsLoading(false);
             }
-            setUserName(user.name || user.email);
-            const data = await profiles.getAll();
-            setUserProfiles(data);
         };
         loadData();
     }, [router]);
@@ -117,7 +124,12 @@ export default function DashboardPage() {
                     </Link>
                 </div>
 
-                {userProfiles.length === 0 ? (
+                {isLoading ? (
+                    <div className="dashboard-loading">
+                        <div className="spinner"></div>
+                        <p>Loading your profiles...</p>
+                    </div>
+                ) : userProfiles.length === 0 ? (
                     <div className="empty-state">
                         <h3>No profiles yet</h3>
                         <p>Create your first setup profile to get started.</p>

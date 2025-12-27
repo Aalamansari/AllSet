@@ -12,17 +12,19 @@ export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
+        setError(null);
 
         try {
             await auth.login(email, password);
             router.push('/dashboard'); // Go to dashboard after login
-        } catch (error) {
-            console.error('Login failed:', error);
-            alert('Login failed. Please check your credentials.');
+        } catch (err: any) {
+            console.error('Login failed:', err);
+            setError(err.message || 'Login failed. Please check your credentials.');
         } finally {
             setLoading(false);
         }
@@ -38,6 +40,12 @@ export default function LoginPage() {
                         </h1>
                         <p className="auth-subtitle">Sign in to your AllSet account</p>
                     </div>
+
+                    {error && (
+                        <div className="error-message-Banner">
+                            {error}
+                        </div>
+                    )}
 
                     <form onSubmit={handleLogin} className="auth-form">
                         <Input

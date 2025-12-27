@@ -12,17 +12,19 @@ export default function SignupPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
+        setError(null);
 
         try {
             await auth.signup(email, password);
             router.push('/onboarding/role');
-        } catch (error) {
-            console.error('Signup failed:', error);
-            alert('Signup failed. Please try again.');
+        } catch (err: any) {
+            console.error('Signup failed:', err);
+            setError(err.message || 'Signup failed. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -38,6 +40,12 @@ export default function SignupPage() {
                         </h1>
                         <p className="auth-subtitle">Get started with AllSet today</p>
                     </div>
+
+                    {error && (
+                        <div className="error-message-Banner">
+                            {error}
+                        </div>
+                    )}
 
                     <form onSubmit={handleSignup} className="auth-form">
                         <Input
