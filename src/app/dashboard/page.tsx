@@ -12,7 +12,7 @@ export default function DashboardPage() {
     const router = useRouter();
     const [userProfiles, setUserProfiles] = useState<Profile[]>([]);
     const [userName, setUserName] = useState('');
-    const [expandedProfileId, setExpandedProfileId] = useState<string | null>(null);
+    const [expandedProfileIds, setExpandedProfileIds] = useState<string[]>([]);
     const hasFetched = useRef(false);
 
     useEffect(() => {
@@ -57,7 +57,9 @@ export default function DashboardPage() {
     };
 
     const toggleExpand = (id: string) => {
-        setExpandedProfileId(expandedProfileId === id ? null : id);
+        setExpandedProfileIds(prev =>
+            prev.includes(id) ? prev.filter(pId => pId !== id) : [...prev, id]
+        );
     };
 
     const toolNames: Record<string, string> = {
@@ -126,7 +128,7 @@ export default function DashboardPage() {
                 ) : (
                     <div className="profiles-grid">
                         {userProfiles.map((profile) => {
-                            const isExpanded = expandedProfileId === profile.id;
+                            const isExpanded = expandedProfileIds.includes(profile.id);
 
                             return (
                                 <div key={profile.id} className="card profile-card">
@@ -151,7 +153,7 @@ export default function DashboardPage() {
                                             <div className="tools-header-row">
                                                 <p className="tools-label">Includes:</p>
                                                 {isExpanded && (
-                                                    <button className="close-expanded-btn" onClick={() => setExpandedProfileId(null)}>
+                                                    <button className="close-expanded-btn" onClick={() => toggleExpand(profile.id)}>
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                                                     </button>
                                                 )}
