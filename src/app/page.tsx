@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 
@@ -6,8 +7,11 @@ export default function Home() {
     <div className="page-wrapper">
       <header className="header-main">
         <div className="container header-content">
-          <div className="logo-text">
-            AllSet
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <Image src="/logo.png" alt="AllSet Logo" width={40} height={40} style={{ borderRadius: '8px' }} />
+            <div className="logo-text">
+              AllSet
+            </div>
           </div>
           <nav className="nav-links">
             <Link href="/login">
